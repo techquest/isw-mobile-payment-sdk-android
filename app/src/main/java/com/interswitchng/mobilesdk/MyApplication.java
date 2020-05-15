@@ -1,6 +1,7 @@
 package com.interswitchng.mobilesdk;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -9,7 +10,7 @@ import com.interswitchng.iswmobilesdk.IswMobileSdk;
 import com.interswitchng.iswmobilesdk.shared.models.core.Environment;
 import com.interswitchng.iswmobilesdk.shared.models.core.IswSdkConfig;
 
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
 
     @Override

@@ -30,8 +30,8 @@ allprojects {
     ext {
         csv = 28
         btv = '28.0.3'
-        msv = 15
-        tsv = 29
+        msv = 16
+        tsv = 28
         versionCode = 1
 
         merchantId = properties.get 'merchantId'

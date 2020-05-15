@@ -19,3 +19,82 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+# isw mobile sdk
+-keep public class com.interswitchng.iswmobilesdk.IswMobileSdk {
+  public protected *;
+}
+
+-keep public enum com.interswitchng.iswmobilesdk.shared.fragments.IswPaymentOptionsFragment$Option {
+    **[] $VALUES;
+    public *;
+}
+
+-keep public interface com.interswitchng.iswmobilesdk.IswMobileSdk$IswPaymentCallback {*;}
+
+-keep public class com.interswitchng.iswmobilesdk.shared.models.core.** {
+    public protected *;
+    !transient <fields>;
+}
+-keep public class com.interswitchng.iswmobilesdk.shared.models.payment.** {
+    public protected *;
+    !transient <fields>;
+}
+
+
+# SC provider
+-keep class org.spongycastle.**
+-dontwarn org.spongycastle.jce.provider.X509LDAPCertStoreSpi
+-dontwarn org.spongycastle.x509.util.LDAPStoreHelper
+#-dontwarn javax.naming.**
+
+
+# Android specifics
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+
+-dontwarn android.support.**
+-dontwarn javax.annotation.**
+
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public void set*(...);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+-keepclassmembers class * extends android.content.Context {
+   public void *(android.view.View);
+   public void *(android.view.MenuItem);
+}
+
+
+-keep public class * extends android.support.v4.app.Fragment {
+    public protected *;
+}
+
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+

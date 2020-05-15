@@ -1,11 +1,11 @@
+
 # Interswitch Payment SDK
 
 This library aids in processing payment through the following channels
 - [x] Card
 - [x] Verve Wallet
 - [x] QR Code
-- [ ] USSD (Coming soon)
-- [ ] PAYCODE (Coming soon)
+- [x] USSD
 
 
 # Usage
@@ -34,7 +34,7 @@ To install the project, add the following to your root project's `build.gradle`
 
 ```
 
-Then add the following to the your app project's `build.gradle`
+Then add the following to the your app project's `build.gradle`, check for the [latest version](https://github.com/techquest/isw-mobile-payment-sdk-android/releases)
 
 ```groovy
     
@@ -63,13 +63,13 @@ public class MyApplication extends Application {
 
     public void configureSDK() {
         // use provided configuration for your merchant account
-        String merchantId = "<your merchantId>"; 
+        String clientId = "<your clientId>"; 
         String merchantCode = "<your merchantCode>";
-        String merchantKey = "<your merchantKey>";
+        String clientSecret = "<your clientSecret>";
 
         // create sdk configuration
-        IswSdkConfig config = new IswSdkConfig(merchantId, 
-                        merchantKey, merchantCode, "566");
+        IswSdkConfig config = new IswSdkConfig(clientId, 
+                        clientSecre, merchantCode, "566");
 
         // uncomment to set environment, default is Environment.TEST
         // config.setEnv(Environment.SANDBOX);
@@ -85,8 +85,32 @@ Once the SDK has been initialized, you can then perform transactions.
 #### Performing Transactions
 You can perform a transaction, once the SDK is configured, like so:
 
+1. First you would need to have your activity implement the `IswMobileSdk.IswPaymentCallback` interface
+
+
 ```java
-    public class PurchaseActivity extends AppCompatActivity {
+    public class PurchaseActivity extends AppCompatActivity implements IswMobileSdk.IswPaymentCallback {
+
+        // ... other methods
+        
+        // user cancelled payment with out completion
+        @Override
+        public void onUserCancel() {
+            // handle cancellation
+        }
+
+        // user completed the payment
+        @Override
+        public void onPaymentCompleted(@NonNull IswPaymentResult result) {
+            // handle payment result
+        }
+    }
+
+```
+2.  Once you have the implemented the interface, you can trigger payments
+
+```java
+    public class PurchaseActivity extends AppCompatActivity implements IswMobileSdk.IswPaymentCallback {
         
         @Override
         protected void onCreate() {
@@ -102,10 +126,6 @@ You can perform a transaction, once the SDK is configured, like so:
                     customerName = "<customer-name>",
                     customerEmail = "<customer.email@domain.com>",
                     customerMobile = "<customer-phone>",
-
-                    // txn info
-                    // Naira's currency code
-                    currencyCode = "566",
                     // generate a unique random
                     // reference for each transaction
                     reference = "<your-unique-ref>";
@@ -114,19 +134,31 @@ You can perform a transaction, once the SDK is configured, like so:
             int amount = providedAmount; // e.g. 50000
                 
             // create payment info
-            IswPaymentInfo iswPaymentInfo = new IswPaymentInfo(customerId,
-                    customerName, customerEmail, customerMobile,
-                    currencyCode, reference, amount);
+            IswPaymentInfo iswPaymentInfo = new IswPaymentInfo(
+                customerId,
+                customerName, 
+                customerEmail,
+                customerMobile,
+                currencyCode,
+                reference,
+                amount
+            );
 
             // trigger payment
-            IswMobileSdk.getInstance().pay(this, iswPaymentInfo);
+            // parameters
+            // -- paymentInfo: the payment information to be processed
+            // -- activityCallback: the IswPaymentCallback that receives the result
+            IswMobileSdk.getInstance().paypay(
+                iswPaymentInfo, 
+                this
+            );
         }
         
     }
 
 ```
 #### Handling Result
-To handle result all you need to do is override on activity result and extract the intent sent back to generate `IswPaymentResult`
+To process the result received `onPaymentCompleted` callback, here are the fields' attributes of the `IswPaymentResult`
 
 | Field                 | Type          | meaning  |   
 |-----------------------|---------------|----------|
@@ -135,33 +167,36 @@ To handle result all you need to do is override on activity result and extract t
 | isSuccessful          | boolean       | flag indicates if txn is successful  |
 | transactionReference  | String        | reference for txn  |
 | amount                | int           | txn amount  |
-| channel               | PaymentChannel| channel used to make payment: one of `CARD, QR, USSD, PAYCODE  |
+| channel               | PaymentChannel| channel used to make payment: one of `CARD`, `WALLET`, `QR`, or `USSD` |
 
 
+And that is it you can start processing payment in your android app.
 
-```java
 
-public class PurchaseActivity extends AppCompatActivity {
-    // ... other stuff
+# Proguard
+If you are using proguard, add the following to your code
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == IswMobileSdk.CODE_PAYMENT) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                toast("You cancelled payment, please try again.");
-            } else if (resultCode == Activity.RESULT_OK) {
-                IswPaymentResult result = IswMobileSdk.getResult(data);
-                if (result.isSuccessful) toast("successful: " + result.channel.name());
-                else toast("failed, try again later");
-            }
-        }
+```ruby
+
+    # ISW classes
+    -keep public class com.interswitchng.iswmobilesdk.IswMobileSdk {
+      public protected *;
+    }
+    
+    -keep public interface com.interswitchng.iswmobilesdk.IswMobileSdk$IswPaymentCallback {*;}
+    
+    -keep public class com.interswitchng.iswmobilesdk.shared.models.core.** {
+        public protected *;
+        !transient <fields>;
+    }
+    -keep public class com.interswitchng.iswmobilesdk.shared.models.payment.** {
+        public protected *;
+        !transient <fields>;
     }
 
-    private void toast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-    }
-}
-
+    # SC provider
+    -keep class org.spongycastle.**
+    -dontwarn org.spongycastle.jce.provider.X509LDAPCertStoreSpi
+    -dontwarn org.spongycastle.x509.util.LDAPStoreHelper
 
 ```
-And that is it you can start processing payment in your android app.
