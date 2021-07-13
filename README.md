@@ -26,13 +26,7 @@ To install the project, add the following to your root project's `build.gradle`
         repositories {
             google()
             jcenter()
-            maven {
-             url = uri("https://maven.pkg.github.com/techquest/isw-android-payment-packages")
-             credentials {
-                 username = "techquest"
-                 password = "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"
-             }
-           }
+            mavenCentral()
         }
         
         //... other stuff
@@ -45,7 +39,7 @@ Then add the following to the your app project's `build.gradle`, check for the [
 ```groovy
     
     dependencies {
-        def versionName = '1.0.4'
+        def versionName = '1.0.3'
         implementation "com.interswitchng:isw-mobile-payment-sdk:$versionName"
     }
 ```
