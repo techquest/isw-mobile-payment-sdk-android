@@ -26,6 +26,7 @@ To install the project, add the following to your root project's `build.gradle`
     allprojects {
         repositories {
             google()
+            jcenter()
             mavenCentral()
         }
         
