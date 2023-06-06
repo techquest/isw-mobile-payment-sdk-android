@@ -40,7 +40,7 @@ Then add the following to the your app project's `build.gradle`, check for the [
 ```groovy
     
     dependencies {
-        def versionName = 'latest-version'
+        def versionName = '1.1.0'
         implementation "com.interswitchng:isw-mobile-payment-sdk:$versionName"
     }
 ```
