@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,6 +14,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.interswitchng.iswmobilesdk.IswMobileSdk;
 import com.interswitchng.iswmobilesdk.shared.models.core.IswPaymentInfo;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements IswMobileSdk.IswP
                         customerMobile,
                         reference,
                         amount);
+
+                iswPaymentInfo.withToken(BuildConfig.MERCHANT_TOKEN);
 
 
                 // trigger payment

@@ -1,6 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    signingConfigs {
+        releaseConfig {
+            keyAlias 'MobileSDK'
+            keyPassword 'password'
+            storeFile file(rootDir.absolutePath + '/keystore.jks')
+            storePassword 'password'
+        }
+    }
+
     compileSdkVersion csv
     buildToolsVersion btv
 
@@ -18,11 +28,13 @@ android {
         buildConfigField("String", "MERCHANT_ID", merchantId)
         buildConfigField("String", "MERCHANT_KEY", merchantKey)
         buildConfigField("String", "MERCHANT_CODE", merchantCode)
+        buildConfigField("String", "MERCHANT_TOKEN", merchantToken)
     }
 
     buildTypes {
         release {
             minifyEnabled true
+            signingConfig signingConfigs.releaseConfig
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -30,19 +42,18 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     // payment sdk
-    def versionName = '1.0.3'
+    def versionName = '1.1.0'
     implementation "com.interswitchng:isw-mobile-payment-sdk:$versionName"
-    implementation 'com.android.support:multidex:1.0.3'
 
+    implementation 'com.google.android.gms:play-services-auth:20.4.0'
     // for devices below android lollipop
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'androidx.multidex:multidex:2.0.1'
 
-
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }

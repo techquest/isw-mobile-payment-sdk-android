@@ -6,6 +6,7 @@ This library aids in processing payment through the following channels
 - [x] Verve Wallet
 - [x] QR Code
 - [x] USSD
+- [x] Bank Transfer
 
 
 # Usage
@@ -25,8 +26,7 @@ To install the project, add the following to your root project's `build.gradle`
     allprojects {
         repositories {
             google()
-            jcenter()
-            maven { url "http://dl.bintray.com/techquest/maven-repo" }
+            mavenCentral()
         }
         
         //... other stuff
@@ -160,14 +160,14 @@ You can perform a transaction, once the SDK is configured, like so:
 #### Handling Result
 To process the result received `onPaymentCompleted` callback, here are the fields' attributes of the `IswPaymentResult`
 
-| Field                 | Type          | meaning  |   
-|-----------------------|---------------|----------|
-| responseCode          | String        | txn response code  |
-| responseDescription   | String        | txn response code description |
-| isSuccessful          | boolean       | flag indicates if txn is successful  |
-| transactionReference  | String        | reference for txn  |
-| amount                | int           | txn amount  |
-| channel               | PaymentChannel| channel used to make payment: one of `CARD`, `WALLET`, `QR`, or `USSD` |
+| Field                 | Type          | meaning                                                                          |   
+|-----------------------|---------------|----------------------------------------------------------------------------------|
+| responseCode          | String        | txn response code                                                                |
+| responseDescription   | String        | txn response code description                                                    |
+| isSuccessful          | boolean       | flag indicates if txn is successful                                              |
+| transactionReference  | String        | reference for txn                                                                |
+| amount                | int           | txn amount                                                                       |
+| channel               | PaymentChannel| channel used to make payment: one of `CARD`, `WALLET`, `QR`, `USSD` or `TRANSFER` |
 
 
 And that is it you can start processing payment in your android app.
@@ -198,5 +198,54 @@ If you are using proguard, add the following to your code
     -keep class org.spongycastle.**
     -dontwarn org.spongycastle.jce.provider.X509LDAPCertStoreSpi
     -dontwarn org.spongycastle.x509.util.LDAPStoreHelper
+    
+    
+    
+    # Android specifics
+    -keep public class * extends android.app.Activity
+    -keep public class * extends android.app.Application
+    -keep public class * extends android.app.Service
+    -keep public class * extends android.content.BroadcastReceiver
+    -keep public class * extends android.content.ContentProvider
+    
+    -dontwarn android.support.**
+    -dontwarn javax.annotation.**
+    
+    -keep public class * extends android.view.View {
+        public <init>(android.content.Context);
+        public <init>(android.content.Context, android.util.AttributeSet);
+        public <init>(android.content.Context, android.util.AttributeSet, int);
+        public void set*(...);
+    }
+    
+    -keepclasseswithmembers class * {
+        public <init>(android.content.Context, android.util.AttributeSet);
+    }
+    
+    -keepclasseswithmembers class * {
+        public <init>(android.content.Context, android.util.AttributeSet, int);
+    }
+    
+    -keepclassmembers class * extends android.content.Context {
+       public void *(android.view.View);
+       public void *(android.view.MenuItem);
+    }
+    
+    
+    -keep public class * extends androidx.fragment.app.Fragment {
+        public protected *;
+    }
+    
+    -keepclassmembers class * implements android.os.Parcelable {
+        static ** CREATOR;
+    }
+    
+    -keepclassmembers class **.R$* {
+        public static <fields>;
+    }
+    
+    -keepclassmembers class * {
+        @android.webkit.JavascriptInterface <methods>;
+    }
 
 ```

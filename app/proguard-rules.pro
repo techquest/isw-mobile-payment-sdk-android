@@ -20,7 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-
 # isw mobile sdk
 -keep public class com.interswitchng.iswmobilesdk.IswMobileSdk {
   public protected *;
@@ -81,7 +80,7 @@
 }
 
 
--keep public class * extends android.support.v4.app.Fragment {
+-keep public class * extends androidx.fragment.app.Fragment {
     public protected *;
 }
 
@@ -98,3 +97,43 @@
 }
 
 
+
+-keepparameternames
+-renamesourcefileattribute SourceFile
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
+
+-keepclasseswithmembernames,includedescriptorclasses class * {
+    native <methods>;
+}
+
+-keepclassmembers,allowoptimization enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# ------------------- TEST DEPENDENCIES -------------------
+-dontwarn org.hamcrest.**
+-dontwarn android.test.**
+-dontwarn android.support.test.**
+
+-keep class org.hamcrest.** {
+   *;
+}
+
+-keep class org.junit.** { *; }
+-dontwarn org.junit.**
+
+-keep class junit.** { *; }
+-dontwarn junit.**
+
+-keep class sun.misc.** { *; }
+-dontwarn sun.misc.**
